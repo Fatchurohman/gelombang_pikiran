@@ -276,46 +276,49 @@
 
   <script>
     // ==========================================
-    // 1. FITUR VISIT COUNTER REAL-TIME (NO SUPABASE)
-    // ==========================================
-    async function initVisitCounter() {
-      const counterElement = document.getElementById('visit-counter');
-      const apiKey = 'gelombangpikiran-fatur62-app'; // Unique ID untuk aplikasi ini
-      
-      try {
-        // Memanggil Counter API gratis untuk increment (+1)
-        const response = await fetch(`https://api.counterapi.dev/v1/${apiKey}/visits/up`);
-        const data = await response.json();
-        
-        if (data && data.count !== undefined) {
-          counterElement.textContent = data.count.toLocaleString('id-ID');
-        } else {
-          // Fallback jika API sedang gangguan
-          fetchGetCounter();
-        }
-      } catch (err) {
-        console.warn("Gagal memuat penghitung kunjungan:", err);
-        counterElement.textContent = "1";
-      }
+// 1. FITUR VISIT COUNTER REAL-TIME (STABIL)
+// ==========================================
+async function initVisitCounter() {
+  const counterElement = document.getElementById('visit-counter');
+  
+  // Nama unik untuk aplikasi kamu agar nilainya tersimpan permanen
+  const namespace = "fatur62-apps";
+  const key = "gelombangpikiran-views";
+  
+  try {
+    // Memanggil API hit counter gratis untuk menambah (+1) jumlah kunjungan
+    const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
+    const data = await response.json();
+    
+    if (data && data.count !== undefined) {
+      counterElement.textContent = Number(data.count).toLocaleString('id-ID');
+    } else {
+      // Fallback jika API pertama lambat
+      fallbackCounter(counterElement);
     }
+  } catch (err) {
+    console.warn("Gagal terhubung ke server utama, menggunakan cadangan:", err);
+    fallbackCounter(counterElement);
+  }
+}
 
-    async function fetchGetCounter() {
-      const counterElement = document.getElementById('visit-counter');
-      const apiKey = 'gelombangpikiran-fatur62-app';
-      try {
-        const response = await fetch(`https://api.counterapi.dev/v1/${apiKey}/visits`);
-        const data = await response.json();
-        if (data && data.count !== undefined) {
-          counterElement.textContent = data.count.toLocaleString('id-ID');
-        }
-      } catch (e) {
-        counterElement.textContent = "1";
-      }
+async function fallbackCounter(element) {
+  try {
+    // API cadangan alternatif
+    const res = await fetch('https://counterapi.com/api/fatur62/gelombangpikiran/up');
+    const data = await res.json();
+    if (data && data.count) {
+      element.textContent = Number(data.count).toLocaleString('id-ID');
+    } else {
+      element.textContent = "1";
     }
+  } catch (e) {
+    element.textContent = "1";
+  }
+}
 
-    // Jalankan penghitung kunjungan saat halaman dibuka
-    document.addEventListener('DOMContentLoaded', initVisitCounter);
-
+// Jalankan saat halaman dibuka
+document.addEventListener('DOMContentLoaded', initVisitCounter);
     // ==========================================
     // 2. AUDIO WEB API (BINAURAL BEATS GENERATOR)
     // ==========================================
