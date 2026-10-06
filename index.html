@@ -159,6 +159,32 @@
       color: #fff;
     }
 
+    /* Timer Controls Styling */
+    .timer-section {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--card-border);
+    }
+
+    .timer-label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .timer-btn {
+      padding: 8px;
+      font-size: 0.75rem;
+    }
+
     /* Latihan Napas */
     .breath-container {
       display: flex;
@@ -182,10 +208,6 @@
 
     .breath-circle.expand {
       transform: scale(1.6);
-    }
-
-    .breath-circle.contract {
-      transform: scale(1);
     }
 
     .breath-text {
@@ -237,7 +259,7 @@
         <span class="pulse-dot"></span>
         <span>Developer : fatur62</span>
         <span style="opacity: 0.3;">|</span>
-        <span>👁️ <span id="visit-counter">...</span> Kunjungan</span>
+        <span>👁️️ <span id="visit-counter">...</span> Kunjungan</span>
       </div>
     </header>
 
@@ -247,12 +269,26 @@
       <canvas id="visualizer"></canvas>
       
       <div class="controls-grid">
-        <button onclick="setFrequency(14, 'Beta - Fokus High')" class="active">Beta (14Hz) - Fokus</button>
-        <button onclick="setFrequency(10, 'Alpha - Relaksasi Santai')">Alpha (10Hz) - Santai</button>
-        <button onclick="setFrequency(6, 'Theta - Meditasi & Kreatif')">Theta (6Hz) - Meditasi</button>
-        <button onclick="setFrequency(2, 'Delta - Tidur Nyenyak')">Delta (2Hz) - Tidur</button>
+        <button onclick="setFrequency(14, 'Beta - Fokus High', event)" class="active">Beta (14Hz) - Fokus</button>
+        <button onclick="setFrequency(10, 'Alpha - Relaksasi Santai', event)">Alpha (10Hz) - Santai</button>
+        <button onclick="setFrequency(6, 'Theta - Meditasi & Kreatif', event)">Theta (6Hz) - Meditasi</button>
+        <button onclick="setFrequency(2, 'Delta - Tidur Nyenyak', event)">Delta (2Hz) - Tidur</button>
         
         <button id="mainPlayBtn" class="play-btn" onclick="toggleAudio()">Mulai Putar Audio</button>
+      </div>
+
+      <!-- Fitur Timer Auto-Stop -->
+      <div class="timer-section">
+        <div class="timer-label">
+          <span>⏱️ Timer Otomatis:</span>
+          <span id="timerCountdown" style="color: var(--accent-blue); font-weight: 600;">Off</span>
+        </div>
+        <div class="timer-grid">
+          <button onclick="setTimer(0, event)" class="timer-btn active">Off</button>
+          <button onclick="setTimer(15, event)" class="timer-btn">15 Mnt</button>
+          <button onclick="setTimer(30, event)" class="timer-btn">30 Mnt</button>
+          <button onclick="setTimer(60, event)" class="timer-btn">60 Mnt</button>
+        </div>
       </div>
     </div>
 
@@ -276,49 +312,43 @@
 
   <script>
     // ==========================================
-// 1. FITUR VISIT COUNTER REAL-TIME (STABIL)
-// ==========================================
-async function initVisitCounter() {
-  const counterElement = document.getElementById('visit-counter');
-  
-  // Nama unik untuk aplikasi kamu agar nilainya tersimpan permanen
-  const namespace = "fatur62-apps";
-  const key = "gelombangpikiran-views";
-  
-  try {
-    // Memanggil API hit counter gratis untuk menambah (+1) jumlah kunjungan
-    const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
-    const data = await response.json();
-    
-    if (data && data.count !== undefined) {
-      counterElement.textContent = Number(data.count).toLocaleString('id-ID');
-    } else {
-      // Fallback jika API pertama lambat
-      fallbackCounter(counterElement);
+    // 1. FITUR VISIT COUNTER REAL-TIME
+    // ==========================================
+    async function initVisitCounter() {
+      const counterElement = document.getElementById('visit-counter');
+      const namespace = "fatur62-apps";
+      const key = "gelombangpikiran-views";
+      
+      try {
+        const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`);
+        const data = await response.json();
+        
+        if (data && data.count !== undefined) {
+          counterElement.textContent = Number(data.count).toLocaleString('id-ID');
+        } else {
+          fallbackCounter(counterElement);
+        }
+      } catch (err) {
+        fallbackCounter(counterElement);
+      }
     }
-  } catch (err) {
-    console.warn("Gagal terhubung ke server utama, menggunakan cadangan:", err);
-    fallbackCounter(counterElement);
-  }
-}
 
-async function fallbackCounter(element) {
-  try {
-    // API cadangan alternatif
-    const res = await fetch('https://counterapi.com/api/fatur62/gelombangpikiran/up');
-    const data = await res.json();
-    if (data && data.count) {
-      element.textContent = Number(data.count).toLocaleString('id-ID');
-    } else {
-      element.textContent = "1";
+    async function fallbackCounter(element) {
+      try {
+        const res = await fetch('https://counterapi.com/api/fatur62/gelombangpikiran/up');
+        const data = await res.json();
+        if (data && data.count) {
+          element.textContent = Number(data.count).toLocaleString('id-ID');
+        } else {
+          element.textContent = "1";
+        }
+      } catch (e) {
+        element.textContent = "1";
+      }
     }
-  } catch (e) {
-    element.textContent = "1";
-  }
-}
 
-// Jalankan saat halaman dibuka
-document.addEventListener('DOMContentLoaded', initVisitCounter);
+    document.addEventListener('DOMContentLoaded', initVisitCounter);
+
     // ==========================================
     // 2. AUDIO WEB API (BINAURAL BEATS GENERATOR)
     // ==========================================
@@ -327,6 +357,11 @@ document.addEventListener('DOMContentLoaded', initVisitCounter);
     let isPlaying = false;
     let currentBeatFreq = 14; 
     const baseFreq = 200; 
+
+    // Timer Variables
+    let timerTimeout = null;
+    let timerInterval = null;
+    let timerSecondsLeft = 0;
 
     function initAudio() {
       if (!audioCtx) {
@@ -341,7 +376,6 @@ document.addEventListener('DOMContentLoaded', initVisitCounter);
       if (!isPlaying) {
         audioCtx.resume();
         
-        // Merging 2 Binaural Channels
         const merger = audioCtx.createChannelMerger(2);
         
         oscLeft = audioCtx.createOscillator();
@@ -371,18 +405,21 @@ document.addEventListener('DOMContentLoaded', initVisitCounter);
       if (oscLeft) oscLeft.stop();
       if (oscRight) oscRight.stop();
       isPlaying = false;
+      
       const btn = document.getElementById('mainPlayBtn');
       btn.textContent = "Mulai Putar Audio";
       btn.style.background = "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))";
+
+      // Reset Timer
+      clearTimer();
     }
 
-    function setFrequency(freq, label) {
+    function setFrequency(freq, label, evt) {
       currentBeatFreq = freq;
       
-      // Update UI Buttons
       const buttons = document.querySelectorAll('.controls-grid button:not(.play-btn)');
       buttons.forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (evt && evt.target) evt.target.classList.add('active');
 
       if (isPlaying) {
         oscRight.frequency.setValueAtTime(baseFreq + currentBeatFreq, audioCtx.currentTime);
@@ -390,7 +427,61 @@ document.addEventListener('DOMContentLoaded', initVisitCounter);
     }
 
     // ==========================================
-    // 3. CANVAS WAVE VISUALIZER
+    // 3. FITUR TIMER AUTO-STOP AUDIO
+    // ==========================================
+    function setTimer(minutes, evt) {
+      clearTimer();
+
+      // UI Active Button
+      const timerBtns = document.querySelectorAll('.timer-btn');
+      timerBtns.forEach(btn => btn.classList.remove('active'));
+      if (evt && evt.target) evt.target.classList.add('active');
+
+      const countdownText = document.getElementById('timerCountdown');
+
+      if (minutes === 0) {
+        countdownText.textContent = "Off";
+        return;
+      }
+
+      timerSecondsLeft = minutes * 60;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timerSecondsLeft--;
+        updateTimerDisplay();
+
+        if (timerSecondsLeft <= 0) {
+          stopAudio();
+          clearTimer();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const countdownText = document.getElementById('timerCountdown');
+      const mins = Math.floor(timerSecondsLeft / 60);
+      const secs = timerSecondsLeft % 60;
+      countdownText.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function clearTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      if (timerTimeout) clearTimeout(timerTimeout);
+      timerInterval = null;
+      timerTimeout = null;
+
+      const countdownText = document.getElementById('timerCountdown');
+      if (countdownText && !isPlaying) {
+        countdownText.textContent = "Off";
+        const timerBtns = document.querySelectorAll('.timer-btn');
+        timerBtns.forEach(btn => btn.classList.remove('active'));
+        if(timerBtns[0]) timerBtns[0].classList.add('active');
+      }
+    }
+
+    // ==========================================
+    // 4. CANVAS WAVE VISUALIZER
     // ==========================================
     const canvas = document.getElementById('visualizer');
     const ctx = canvas.getContext('2d');
@@ -428,7 +519,7 @@ document.addEventListener('DOMContentLoaded', initVisitCounter);
     drawCanvas();
 
     // ==========================================
-    // 4. BREATHING GUIDE (4-7-8)
+    // 5. BREATHING GUIDE (4-7-8)
     // ==========================================
     let isBreathing = false;
     let breathInterval;
@@ -465,11 +556,9 @@ document.addEventListener('DOMContentLoaded', initVisitCounter);
     }
 
     // ==========================================
-    // 5. LOCALSTORAGE EUREKA NOTES
+    // 6. LOCALSTORAGE EUREKA NOTES
     // ==========================================
     const notesBox = document.getElementById('eurekaNotes');
-    
-    // Load catatan sebelumnya jika ada
     notesBox.value = localStorage.getItem('gelombang_eureka_notes') || '';
 
     function saveNotes() {
