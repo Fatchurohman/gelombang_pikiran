@@ -99,6 +99,30 @@
       100% { opacity: 0.4; }
     }
 
+    /* Tombol Wajib Baca */
+    .btn-wajib-baca {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3));
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .btn-wajib-baca:hover {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.4));
+      transform: translateY(-1px);
+    }
+
     /* Card Component */
     .card {
       background: var(--card-bg);
@@ -243,6 +267,131 @@
       border: none;
       margin-top: 5px;
     }
+
+    /* ==========================================
+       STYLING MODAL DASAR TEORI / PANDUAN
+       ========================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      max-width: 550px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .modal-header h2 {
+      font-size: 1.2rem;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .theory-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-blue);
+      padding: 12px 14px;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .theory-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .theory-box h3 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .theory-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .theory-list li {
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .theory-list li::before {
+      content: "•";
+      color: var(--accent-blue);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .btn-back {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .btn-back:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
@@ -259,8 +408,13 @@
         <span class="pulse-dot"></span>
         <span>Developer : fatur62</span>
         <span style="opacity: 0.3;">|</span>
-        <span>👁️️ <span id="visit-counter">...</span> Kunjungan</span>
+        <span>👁️ <span id="visit-counter">...</span> Kunjungan</span>
       </div>
+
+      <!-- Tombol Wajib Baca -->
+      <button class="btn-wajib-baca" onclick="openTheoryModal()">
+        ⚠️ Wajib Baca: Panduan & Dasar Teori
+      </button>
     </header>
 
     <!-- Visualizer & Sound Generator -->
@@ -310,7 +464,74 @@
 
   </div>
 
+  <!-- ==========================================
+       MODAL LANDASAN TEORI & PANDUAN
+       ========================================== -->
+  <div id="theoryModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📖 Dasar Teori & Panduan Penggunaan</h2>
+      </div>
+      
+      <div class="modal-body">
+        
+        <div class="theory-box warning">
+          <h3>🎧 1. WAJIB Menggunakan Earphone / Headphone</h3>
+          <p>
+            Efek <i>Binaural Beats</i> <b>TIDAK AKAN BEKERJA</b> jika mendengarkan lewat speaker biasa. Earphone wajib digunakan agar saluran suara telinga kiri dan kanan terpisah sempurna.
+          </p>
+        </div>
+
+        <div class="theory-box">
+          <h3>🔬 2. Cara Kerja Binaural Beats</h3>
+          <p>
+            Telinga manusia tidak bisa mendengar frekuensi gelombang otak secara langsung (seperti 2Hz). Maka dari itu, aplikasi ini mengirimkan frekuensi <b>200Hz di telinga kiri</b> dan <b>202Hz di telinga kanan</b>. 
+            <br/><br/>
+            Selisih <b>2Hz</b> tersebut akan diolah oleh otak menjadi gelombang buatan secara internal untuk merangsang kondisi pikiran tertentu.
+          </p>
+        </div>
+
+        <div class="theory-box">
+          <h3>🌊 3. Jenis Gelombang & Manfaatnya</h3>
+          <ul class="theory-list">
+            <li><b>Delta (2Hz):</b> Tidur nyenyak (<i>deep sleep</i>), pemulihan fisik & melepas stres berat.</li>
+            <li><b>Theta (6Hz):</b> Meditasi dalam, memicu ide kreatif (<i>Eureka moment</i>) & ketenangan.</li>
+            <li><b>Alpha (10Hz):</b> Santai tapi tetap fokus, belajar nyaman, & mengurangi kecemasan.</li>
+            <li><b>Beta (14Hz):</b> Konsentrasi kerja tinggi, berpikir analitis, & kewaspadaan.</li>
+          </ul>
+        </div>
+
+        <div class="theory-box">
+          <h3>💡 4. Urutan Penggunaan Terbaik</h3>
+          <ol style="padding-left: 18px; margin-top: 6px;">
+            <li>Lakukan <b>Latihan Napas (4-7-8)</b> selama 2-3 menit untuk merilekskan otot dan jantung.</li>
+            <li>Gunakan <b>Earphone</b> dengan volume sedang/nyaman (tidak terlalu keras).</li>
+            <li>Pilih jenis gelombang dan pasang <b>Timer Auto-Stop</b> sesuai kebutuhan.</li>
+          </ol>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-back" onclick="closeTheoryModal()">
+          Saya Paham, Kembali ke Aplikasi
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // ==========================================
+    // 0. FITUR MODAL DASAR TEORI
+    // ==========================================
+    function openTheoryModal() {
+      document.getElementById('theoryModal').classList.add('show');
+    }
+
+    function closeTheoryModal() {
+      document.getElementById('theoryModal').classList.remove('show');
+    }
+
     // ==========================================
     // 1. FITUR VISIT COUNTER REAL-TIME
     // ==========================================
@@ -432,7 +653,6 @@
     function setTimer(minutes, evt) {
       clearTimer();
 
-      // UI Active Button
       const timerBtns = document.querySelectorAll('.timer-btn');
       timerBtns.forEach(btn => btn.classList.remove('active'));
       if (evt && evt.target) evt.target.classList.add('active');
