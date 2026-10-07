@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GelombangPikiran - Audio Wave Generator & Mind Tools</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --card-bg: rgba(22, 28, 45, 0.6);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #00d2ff;
+      --accent-purple: #925fff;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(146, 95, 255, 0.08) 0%, transparent 40%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+
+    .developer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .btn-wajib-baca {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3));
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .btn-wajib-baca:hover {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.4));
+      transform: translateY(-1px);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    #visualizer {
+      width: 100%;
+      height: 100px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      display: block;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    button {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-blue);
+    }
+
+    button.active {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(146, 95, 255, 0.2));
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    .option-group {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .timer-section {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--card-border);
+    }
+
+    .timer-label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .timer-btn {
+      padding: 8px;
+      font-size: 0.75rem;
+    }
+
+    .breath-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    .breath-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-blue), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+      transition: transform 4s ease-in-out;
+    }
+
+    .breath-circle.expand {
+      transform: scale(1.6);
+    }
+
+    .breath-text {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px;
+      color: var(--text-main);
+      resize: none;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: var(--accent-purple);
+    }
+
+    .play-btn {
+      grid-column: span 2;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #fff;
+      font-size: 1rem;
+      border: none;
+      margin-top: 5px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      max-width: 550px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .modal-header h2 {
+      font-size: 1.2rem;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .theory-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-blue);
+      padding: 12px 14px;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .theory-box.warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .theory-box.credit {
+      border-left-color: var(--accent-purple);
+      background: rgba(146, 95, 255, 0.08);
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+
+    .theory-box h3 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .theory-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .theory-list li {
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .theory-list li::before {
+      content: "•";
+      color: var(--accent-blue);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .btn-back {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>🧠 GelombangPikiran</h1>
+      <p class="subtitle">Binaural Beats & Audio Mind Tools</p>
+      
+      <div class="developer-badge">
+        <span class="pulse-dot"></span>
+        <span>Developer : fatur62</span>
+        <span style="opacity: 0.3;">|</span>
+        <span>👁️ <span id="visit-counter">181</span> Kunjungan</span>
+      </div>
+
+      <button class="btn-wajib-baca" onclick="openTheoryModal()">
+        ⚠️ Wajib Baca: Panduan & Dasar Teori
+      </button>
+    </header>
+
+    <div class="card">
+      <div class="card-title">🎧 Frequency Generator</div>
+      <canvas id="visualizer"></canvas>
+      
+      <div class="controls-grid">
+        <button onclick="setFrequency(14, 'sine', 'none', event)" class="active">Beta (14Hz) - Fokus</button>
+        <button onclick="setFrequency(10, 'triangle', 'rain', event)">Alpha (10Hz) - Santai</button>
+        <button onclick="setFrequency(6, 'sine', 'rain', event)">Theta (6Hz) - Meditasi</button>
+        <button onclick="setFrequency(2, 'sine', 'waves', event)">Delta (2Hz) - Tidur</button>
+        
+        <button id="mainPlayBtn" class="play-btn" onclick="toggleAudio()">Mulai Putar Audio</button>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">🌊 Karakter Bentuk Gelombang (Waveform):</div>
+        <select id="waveformSelect" onchange="changeWaveform(this.value)">
+          <option value="sine">Sinus (Sine) - Halus & Murni (Sangat Nyaman)</option>
+          <option value="triangle">Segitiga (Triangle) - Hangat (Cocok untuk Alpha)</option>
+        </select>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">🌧️ Suara Latar Latar Belakang (Ambient Noise):</div>
+        <select id="ambientSelect" onchange="changeAmbient(this.value)">
+          <option value="none">Tanpa Suara Latar</option>
+          <option value="rain">Hujan Deras Sintetis (Pink Noise)</option>
+          <option value="waves">Deru Ombak Sintetis (Brown Noise)</option>
+        </select>
+      </div>
+
+      <div class="timer-section">
+        <div class="timer-label">
+          <span>⏱️ Timer Otomatis:</span>
+          <span id="timerCountdown" style="color: var(--accent-blue); font-weight: 600;">Off</span>
+        </div>
+        <div class="timer-grid">
+          <button onclick="setTimer(0, event)" class="timer-btn active">Off</button>
+          <button onclick="setTimer(15, event)" class="timer-btn">15 Mnt</button>
+          <button onclick="setTimer(30, event)" class="timer-btn">30 Mnt</button>
+          <button onclick="setTimer(60, event)" class="timer-btn">60 Mnt</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🫁 Panduan Latihan Napas (4-7-8)</div>
+      <div class="breath-container">
+        <div id="breathCircle" class="breath-circle"></div>
+        <div id="breathText" class="breath-text">Tekan mulai untuk rileks</div>
+        <button style="margin-top: 15px; width: 100%;" onclick="toggleBreathing()">Mulai Latihan Napas</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 Catatan Eureka (Auto-Save)</div>
+      <textarea id="eurekaNotes" placeholder="Tuliskan ide mendadak kamu di sini..." oninput="saveNotes()"></textarea>
+    </div>
+  </div>
+
+  <div id="theoryModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📖 Dasar Teori & Panduan Penggunaan</h2>
+      </div>
+      
+      <div class="modal-body">
+        <div class="theory-box warning">
+          <h3>🎧 1. WAJIB Menggunakan Earphone / Headphone</h3>
+          <p>
+            Efek <i>Binaural Beats</i> <b>TIDAK AKAN BEKERJA</b> jika mendengarkan lewat speaker biasa. Earphone wajib digunakan agar saluran suara telinga kiri dan kanan terpisah sempurna.
+          </p>
+        </div>
+
+        <div class="theory-box">
+          <h3>🔬 2. Cara Kerja Binaural Beats</h3>
+          <p>
+            Telinga manusia tidak bisa mendengar frekuensi gelombang otak secara langsung (seperti 2Hz). Maka dari itu, aplikasi ini mengirimkan frekuensi <b>200Hz di telinga kiri</b> dan <b>202Hz di telinga kanan</b>. 
+            <br/><br/>
+            Selisih <b>2Hz</b> tersebut akan diolah oleh otak menjadi gelombang buatan secara internal untuk merangsang kondisi pikiran tertentu.
+          </p>
+        </div>
+
+        <div class="theory-box">
+          <h3>🌊 3. Jenis Gelombang & Manfaatnya</h3>
+          <ul class="theory-list">
+            <li><b>Delta (2Hz):</b> Tidur nyenyak (<i>deep sleep</i>), pemulihan fisik & melepas stres berat.</li>
+            <li><b>Theta (6Hz):</b> Meditasi dalam, memicu ide kreatif (<i>Eureka moment</i>) & ketenangan.</li>
+            <li><b>Alpha (10Hz):</b> Santai tapi tetap fokus, belajar nyaman, & mengurangi kecemasan.</li>
+            <li><b>Beta (14Hz):</b> Konsentrasi kerja tinggi, berpikir analitis, & kewaspadaan.</li>
+          </ul>
+        </div>
+
+        <div class="theory-box">
+          <h3>💡 4. Urutan Penggunaan Terbaik</h3>
+          <ol style="padding-left: 18px; margin-top: 6px;">
+            <li>Lakukan <b>Latihan Napas (4-7-8)</b> selama 2-3 menit untuk merilekskan otot dan jantung.</li>
+            <li>Gunakan <b>Earphone</b> dengan volume sedang/nyaman (tidak terlalu keras).</li>
+            <li>Pilih jenis gelombang dan pasang <b>Timer Auto-Stop</b> sesuai kebutuhan.</li>
+          </ol>
+        </div>
+
+        <div class="theory-box credit">
+          <p>
+            Aplikasi ini dibuat oleh <b>fatur62</b> dengan merujuk pada dasar teori ilmiah dari sumber:
+          </p>
+          <ul style="padding-left: 18px; margin-top: 6px;">
+            <li><i>Binaural Beats - A Beginner's Guide</i> karya <b>James Mathews</b></li>
+            <li><i>Principles of Neural Science</i> karya <b>Eric R. Kandel, dkk.</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-back" onclick="closeTheoryModal()">
+          Saya Paham, Kembali ke Aplikasi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openTheoryModal() {
+      document.getElementById('theoryModal').classList.add('show');
+    }
+
+    function closeTheoryModal() {
+      document.getElementById('theoryModal').classList.remove('show');
+    }
+
+    // ==========================================
+    // COUNTER KUNJUNGAN REALTIME (BASE: 180)
+    // ==========================================
+    async function initVisitCounter() {
+      const counterElement = document.getElementById('visit-counter');
+      const baseVisits = 180; // Offset dasar angka kunjungan
+      
+      try {
+        // Menggunakan API CountAPI dengan namespace unik 'fatur62-gelombang-pikiran-v1'
+        const response = await fetch('https://api.countapi.xyz/hit/fatur62-gelombang-pikiran-v1/visits');
+        if (response.ok) {
+          const data = await response.json();
+          if (data && typeof data.value === 'number') {
+            const totalVisits = baseVisits + data.value;
+            counterElement.textContent = Number(totalVisits).toLocaleString('id-ID');
+            return;
+          }
+        }
+        throw new Error('Fallback ke counter alternatif');
+      } catch (err) {
+        // Fallback jika API pertama terhalang CORS/AdBlocker: hitung increment berbasis LocalStorage + API publik 2
+        try {
+          const res = await fetch('https://api.counterapi.dev/v1/fatur62/gelombangpikiran-v181/up');
+          const data = await res.json();
+          if (data && typeof data.count === 'number') {
+            const totalVisits = baseVisits + data.count;
+            counterElement.textContent = Number(totalVisits).toLocaleString('id-ID');
+          } else {
+            counterElement.textContent = "181";
+          }
+        } catch (e) {
+          counterElement.textContent = "181";
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initVisitCounter);
+
+    // ==========================================
+    // AUDIO ENGINE WITH SYNTHETIC AMBIENT NOISE
+    // ==========================================
+    let audioCtx = null;
+    let oscLeft = null;
+    let oscRight = null;
+    let mergerNode = null;
+    let ambientNode = null;
+    let ambientGainNode = null;
+    let isPlaying = false;
+    let currentBeatFreq = 14; 
+    let currentWaveform = 'sine';
+    let currentAmbient = 'none';
+    const baseFreq = 200; 
+
+    let timerTimeout = null;
+    let timerInterval = null;
+    let timerSecondsLeft = 0;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+    }
+
+    async function toggleAudio() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const btn = document.getElementById('mainPlayBtn');
+      
+      if (!isPlaying) {
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+        
+        mergerNode = audioCtx.createChannelMerger(2);
+        
+        oscLeft = audioCtx.createOscillator();
+        oscRight = audioCtx.createOscillator();
+
+        oscLeft.type = currentWaveform;
+        oscRight.type = currentWaveform;
+
+        oscLeft.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+        oscRight.frequency.setValueAtTime(baseFreq + currentBeatFreq, audioCtx.currentTime);
+
+        oscLeft.connect(mergerNode, 0, 0); 
+        oscRight.connect(mergerNode, 0, 1); 
+
+        mergerNode.connect(audioCtx.destination);
+
+        oscLeft.start();
+        oscRight.start();
+
+        playAmbientNoise();
+
+        isPlaying = true;
+        btn.textContent = "Hentikan Audio";
+        btn.style.background = "#ef4444";
+      } else {
+        stopAudio();
+      }
+    }
+
+    function stopAudio() {
+      if (oscLeft) {
+        try { 
+          oscLeft.stop(); 
+          oscLeft.disconnect();
+        } catch(e){}
+        oscLeft = null;
+      }
+      if (oscRight) {
+        try { 
+          oscRight.stop(); 
+          oscRight.disconnect();
+        } catch(e){}
+        oscRight = null;
+      }
+      if (mergerNode) {
+        try { mergerNode.disconnect(); } catch(e){}
+        mergerNode = null;
+      }
+
+      stopAmbientNoise();
+      
+      isPlaying = false;
+      
+      const btn = document.getElementById('mainPlayBtn');
+      if (btn) {
+        btn.textContent = "Mulai Putar Audio";
+        btn.style.background = "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))";
+      }
+
+      clearTimer();
+    }
+
+    function setFrequency(freq, recommendedWave, recommendedAmbient, evt) {
+      currentBeatFreq = freq;
+      
+      const buttons = document.querySelectorAll('.controls-grid button:not(.play-btn)');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      if (evt && evt.target) evt.target.classList.add('active');
+
+      document.getElementById('waveformSelect').value = recommendedWave;
+      document.getElementById('ambientSelect').value = recommendedAmbient;
+      currentWaveform = recommendedWave;
+      currentAmbient = recommendedAmbient;
+
+      if (isPlaying && oscLeft && oscRight && audioCtx) {
+        oscLeft.type = currentWaveform;
+        oscRight.type = currentWaveform;
+        oscRight.frequency.setValueAtTime(baseFreq + currentBeatFreq, audioCtx.currentTime);
+        playAmbientNoise();
+      }
+    }
+
+    function changeWaveform(wave) {
+      currentWaveform = wave;
+      if (isPlaying && oscLeft && oscRight) {
+        oscLeft.type = wave;
+        oscRight.type = wave;
+      }
+    }
+
+    function changeAmbient(ambientType) {
+      currentAmbient = ambientType;
+      if (isPlaying) {
+        playAmbientNoise();
+      }
+    }
+
+    function createNoiseBuffer() {
+      if (!audioCtx) return null;
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let lastOut = 0.0;
+
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        if (currentAmbient === 'rain') {
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5;
+        } else if (currentAmbient === 'waves') {
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 2.0;
+        }
+      }
+      return buffer;
+    }
+
+    function playAmbientNoise() {
+      stopAmbientNoise();
+      if (currentAmbient === 'none' || !audioCtx) return;
+
+      const noiseBuffer = createNoiseBuffer();
+      if (!noiseBuffer) return;
+
+      ambientNode = audioCtx.createBufferSource();
+      ambientNode.buffer = noiseBuffer;
+      ambientNode.loop = true;
+
+      ambientGainNode = audioCtx.createGain();
+      ambientGainNode.gain.setValueAtTime(0.15, audioCtx.currentTime); 
+
+      ambientNode.connect(ambientGainNode);
+      ambientGainNode.connect(audioCtx.destination);
+      ambientNode.start();
+    }
+
+    function stopAmbientNoise() {
+      if (ambientNode) {
+        try {
+          ambientNode.stop();
+          ambientNode.disconnect();
+        } catch(e){}
+        ambientNode = null;
+      }
+      if (ambientGainNode) {
+        try { ambientGainNode.disconnect(); } catch(e){}
+        ambientGainNode = null;
+      }
+    }
+
+    function setTimer(minutes, evt) {
+      clearTimer();
+
+      const timerBtns = document.querySelectorAll('.timer-btn');
+      timerBtns.forEach(btn => btn.classList.remove('active'));
+      if (evt && evt.target) evt.target.classList.add('active');
+
+      const countdownText = document.getElementById('timerCountdown');
+
+      if (minutes === 0) {
+        if (countdownText) countdownText.textContent = "Off";
+        return;
+      }
+
+      timerSecondsLeft = minutes * 60;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timerSecondsLeft--;
+        updateTimerDisplay();
+
+        if (timerSecondsLeft <= 0) {
+          stopAudio();
+          clearTimer();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const countdownText = document.getElementById('timerCountdown');
+      if (!countdownText) return;
+      const mins = Math.floor(timerSecondsLeft / 60);
+      const secs = timerSecondsLeft % 60;
+      countdownText.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function clearTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      if (timerTimeout) clearTimeout(timerTimeout);
+      timerInterval = null;
+      timerTimeout = null;
+
+      const countdownText = document.getElementById('timerCountdown');
+      if (countdownText && !isPlaying) {
+        countdownText.textContent = "Off";
+        const timerBtns = document.querySelectorAll('.timer-btn');
+        timerBtns.forEach(btn => btn.classList.remove('active'));
+        if (timerBtns[0]) timerBtns[0].classList.add('active');
+      }
+    }
+
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+    let waveStep = 0;
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function drawCanvas() {
+      if (!canvas || !ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#00d2ff';
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const amplitude = isPlaying ? 20 : 2;
+      const frequency = 0.02;
+
+      for (let x = 0; x < width; x++) {
+        const y = height / 2 + Math.sin(x * frequency + waveStep) * amplitude;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      waveStep += isPlaying ? 0.08 : 0.02;
+      requestAnimationFrame(drawCanvas);
+    }
+    drawCanvas();
+
+    let isBreathing = false;
+    let breathInterval = null;
+    let breathTimeout1 = null;
+    let breathTimeout2 = null;
+
+    function toggleBreathing() {
+      const circle = document.getElementById('breathCircle');
+      const text = document.getElementById('breathText');
+      if (!circle || !text) return;
+      
+      if (!isBreathing) {
+        isBreathing = true;
+        text.textContent = "Tarik napas perlahan... (4 detik)";
+        circle.classList.add('expand');
+
+        breathInterval = setInterval(() => {
+          text.textContent = "Tahan napas... (7 detik)";
+          
+          breathTimeout1 = setTimeout(() => {
+            text.textContent = "Hembuskan perlahan... (8 detik)";
+            circle.classList.remove('expand');
+          }, 3000);
+
+          breathTimeout2 = setTimeout(() => {
+            text.textContent = "Tarik napas perlahan...";
+            circle.classList.add('expand');
+          }, 7000);
+
+        }, 11000);
+      } else {
+        clearInterval(breathInterval);
+        clearTimeout(breathTimeout1);
+        clearTimeout(breathTimeout2);
+        breathInterval = null;
+        breathTimeout1 = null;
+        breathTimeout2 = null;
+        circle.classList.remove('expand');
+        text.textContent = "Latihan selesai / dihentikan";
+        isBreathing = false;
+      }
+    }
+
+    const notesBox = document.getElementById('eurekaNotes');
+    if (notesBox) {
+      notesBox.value = localStorage.getItem('gelombang_eureka_notes') || '';
+    }
+
+    function saveNotes() {
+      if (notesBox) {
+        localStorage.setItem('gelombang_eureka_notes', notesBox.value);
+      }
+    }
+  </script>
+
+</body>
+</html>
