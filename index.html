@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GelombangPikiran - Audio Wave Generator & Mind Tools</title>
   
-  <!-- Font & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
@@ -50,7 +49,6 @@
       margin-top: 10px;
     }
 
-    /* Header & Badge Developer */
     header {
       text-align: center;
       margin-bottom: 10px;
@@ -71,7 +69,6 @@
       margin-bottom: 12px;
     }
 
-    /* Badge Developer & Live Visit Counter */
     .developer-badge {
       display: inline-flex;
       align-items: center;
@@ -99,7 +96,6 @@
       100% { opacity: 0.4; }
     }
 
-    /* Tombol Wajib Baca */
     .btn-wajib-baca {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3));
       border: 1px solid #f59e0b;
@@ -123,7 +119,6 @@
       transform: translateY(-1px);
     }
 
-    /* Card Component */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -143,7 +138,6 @@
       color: var(--text-main);
     }
 
-    /* Visualizer Canvas */
     #visualizer {
       width: 100%;
       height: 100px;
@@ -152,7 +146,6 @@
       display: block;
     }
 
-    /* Controls Grid */
     .controls-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -183,7 +176,30 @@
       color: #fff;
     }
 
-    /* Timer Controls Styling */
+    /* Option Selectors */
+    .option-group {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
     .timer-section {
       margin-top: 15px;
       padding-top: 12px;
@@ -209,7 +225,6 @@
       font-size: 0.75rem;
     }
 
-    /* Latihan Napas */
     .breath-container {
       display: flex;
       flex-direction: column;
@@ -240,7 +255,6 @@
       color: var(--text-sub);
     }
 
-    /* Quick Notes */
     textarea {
       width: 100%;
       height: 90px;
@@ -258,7 +272,6 @@
       border-color: var(--accent-purple);
     }
 
-    /* Main Toggle Play */
     .play-btn {
       grid-column: span 2;
       background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
@@ -268,9 +281,6 @@
       margin-top: 5px;
     }
 
-    /* ==========================================
-       STYLING MODAL DASAR TEORI / PANDUAN
-       ========================================== */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -395,22 +405,15 @@
       border-radius: 12px;
       cursor: pointer;
     }
-
-    .btn-back:hover {
-      opacity: 0.9;
-    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    
-    <!-- Header -->
     <header>
       <h1>🧠 GelombangPikiran</h1>
       <p class="subtitle">Binaural Beats & Audio Mind Tools</p>
       
-      <!-- Developer Badge & Real-Time Kunjungan -->
       <div class="developer-badge">
         <span class="pulse-dot"></span>
         <span>Developer : fatur62</span>
@@ -418,27 +421,41 @@
         <span>👁️ <span id="visit-counter">...</span> Kunjungan</span>
       </div>
 
-      <!-- Tombol Wajib Baca -->
       <button class="btn-wajib-baca" onclick="openTheoryModal()">
-        ⚠️ Wajib Baca Panduan ini Sebelum Aplikasi digunakan
+        ⚠️ Wajib Baca: Panduan & Dasar Teori
       </button>
     </header>
 
-    <!-- Visualizer & Sound Generator -->
     <div class="card">
       <div class="card-title">🎧 Frequency Generator</div>
       <canvas id="visualizer"></canvas>
       
       <div class="controls-grid">
-        <button onclick="setFrequency(14, 'Beta - Fokus High', event)" class="active">Beta (14Hz) - Fokus</button>
-        <button onclick="setFrequency(10, 'Alpha - Relaksasi Santai', event)">Alpha (10Hz) - Santai</button>
-        <button onclick="setFrequency(6, 'Theta - Meditasi & Kreatif', event)">Theta (6Hz) - Meditasi</button>
-        <button onclick="setFrequency(2, 'Delta - Tidur Nyenyak', event)">Delta (2Hz) - Tidur</button>
+        <button onclick="setFrequency(14, 'sine', 'none', event)" class="active">Beta (14Hz) - Fokus</button>
+        <button onclick="setFrequency(10, 'triangle', 'rain', event)">Alpha (10Hz) - Santai</button>
+        <button onclick="setFrequency(6, 'sine', 'rain', event)">Theta (6Hz) - Meditasi</button>
+        <button onclick="setFrequency(2, 'sine', 'waves', event)">Delta (2Hz) - Tidur</button>
         
         <button id="mainPlayBtn" class="play-btn" onclick="toggleAudio()">Mulai Putar Audio</button>
       </div>
 
-      <!-- Fitur Timer Auto-Stop -->
+      <div class="option-group">
+        <div class="option-label">🌊 Karakter Bentuk Gelombang (Waveform):</div>
+        <select id="waveformSelect" onchange="changeWaveform(this.value)">
+          <option value="sine">Sinus (Sine) - Halus & Murni (Sangat Nyaman)</option>
+          <option value="triangle">Segitiga (Triangle) - Hangat (Cocok untuk Alpha)</option>
+        </select>
+      </div>
+
+      <div class="option-group">
+        <div class="option-label">🌧️ Suara Latar Latar Belakang (Ambient Noise):</div>
+        <select id="ambientSelect" onchange="changeAmbient(this.value)">
+          <option value="none">Tanpa Suara Latar</option>
+          <option value="rain">Hujan Deras Sintetis (Pink Noise)</option>
+          <option value="waves">Deru Ombak Sintetis (Brown Noise)</option>
+        </select>
+      </div>
+
       <div class="timer-section">
         <div class="timer-label">
           <span>⏱️ Timer Otomatis:</span>
@@ -453,7 +470,6 @@
       </div>
     </div>
 
-    <!-- Interactive Breathing Guide -->
     <div class="card">
       <div class="card-title">🫁 Panduan Latihan Napas (4-7-8)</div>
       <div class="breath-container">
@@ -463,25 +479,19 @@
       </div>
     </div>
 
-    <!-- Quick Eureka Notes -->
     <div class="card">
       <div class="card-title">📝 Catatan Eureka (Auto-Save)</div>
       <textarea id="eurekaNotes" placeholder="Tuliskan ide mendadak kamu di sini..." oninput="saveNotes()"></textarea>
     </div>
-
   </div>
 
-  <!-- ==========================================
-       MODAL LANDASAN TEORI & PANDUAN
-       ========================================== -->
   <div id="theoryModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>📖Panduan Penggunaan</h2>
+        <h2>📖 Dasar Teori & Panduan Penggunaan</h2>
       </div>
       
       <div class="modal-body">
-        
         <div class="theory-box warning">
           <h3>🎧 1. WAJIB Menggunakan Earphone / Headphone</h3>
           <p>
@@ -517,7 +527,6 @@
           </ol>
         </div>
 
-        <!-- Bagian Pengkreditan & Referensi Sumber -->
         <div class="theory-box credit">
           <p>
             Aplikasi ini dibuat oleh <b>fatur62</b> dengan merujuk pada dasar teori ilmiah dari sumber:
@@ -527,7 +536,6 @@
             <li><i>Principles of Neural Science</i> karya <b>Eric R. Kandel, dkk.</b></li>
           </ul>
         </div>
-
       </div>
 
       <div class="modal-footer">
@@ -539,9 +547,6 @@
   </div>
 
   <script>
-    // ==========================================
-    // 0. FITUR MODAL DASAR TEORI
-    // ==========================================
     function openTheoryModal() {
       document.getElementById('theoryModal').classList.add('show');
     }
@@ -550,9 +555,6 @@
       document.getElementById('theoryModal').classList.remove('show');
     }
 
-    // ==========================================
-    // 1. FITUR VISIT COUNTER REAL-TIME
-    // ==========================================
     async function initVisitCounter() {
       const counterElement = document.getElementById('visit-counter');
       const namespace = "fatur62-apps";
@@ -589,15 +591,18 @@
     document.addEventListener('DOMContentLoaded', initVisitCounter);
 
     // ==========================================
-    // 2. AUDIO WEB API (BINAURAL BEATS GENERATOR)
+    // AUDIO ENGINE WITH SYNTHETIC AMBIENT NOISE
     // ==========================================
     let audioCtx;
     let oscLeft, oscRight;
+    let ambientNode = null;
+    let ambientGainNode = null;
     let isPlaying = false;
     let currentBeatFreq = 14; 
+    let currentWaveform = 'sine';
+    let currentAmbient = 'none';
     const baseFreq = 200; 
 
-    // Timer Variables
     let timerTimeout = null;
     let timerInterval = null;
     let timerSecondsLeft = 0;
@@ -620,6 +625,9 @@
         oscLeft = audioCtx.createOscillator();
         oscRight = audioCtx.createOscillator();
 
+        oscLeft.type = currentWaveform;
+        oscRight.type = currentWaveform;
+
         oscLeft.frequency.value = baseFreq;
         oscRight.frequency.value = baseFreq + currentBeatFreq;
 
@@ -631,6 +639,8 @@
         oscLeft.start();
         oscRight.start();
 
+        playAmbientNoise();
+
         isPlaying = true;
         btn.textContent = "Hentikan Audio";
         btn.style.background = "#ef4444";
@@ -641,33 +651,112 @@
     }
 
     function stopAudio() {
-      if (oscLeft) oscLeft.stop();
-      if (oscRight) oscRight.stop();
+      if (oscLeft) {
+        try { oscLeft.stop(); } catch(e){}
+      }
+      if (oscRight) {
+        try { oscRight.stop(); } catch(e){}
+      }
+      stopAmbientNoise();
+      
       isPlaying = false;
       
       const btn = document.getElementById('mainPlayBtn');
       btn.textContent = "Mulai Putar Audio";
       btn.style.background = "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))";
 
-      // Reset Timer
       clearTimer();
     }
 
-    function setFrequency(freq, label, evt) {
+    function setFrequency(freq, recommendedWave, recommendedAmbient, evt) {
       currentBeatFreq = freq;
       
       const buttons = document.querySelectorAll('.controls-grid button:not(.play-btn)');
       buttons.forEach(btn => btn.classList.remove('active'));
       if (evt && evt.target) evt.target.classList.add('active');
 
+      document.getElementById('waveformSelect').value = recommendedWave;
+      document.getElementById('ambientSelect').value = recommendedAmbient;
+      currentWaveform = recommendedWave;
+      currentAmbient = recommendedAmbient;
+
       if (isPlaying) {
+        oscLeft.type = currentWaveform;
+        oscRight.type = currentWaveform;
         oscRight.frequency.setValueAtTime(baseFreq + currentBeatFreq, audioCtx.currentTime);
+        playAmbientNoise();
       }
     }
 
-    // ==========================================
-    // 3. FITUR TIMER AUTO-STOP AUDIO
-    // ==========================================
+    function changeWaveform(wave) {
+      currentWaveform = wave;
+      if (isPlaying && oscLeft && oscRight) {
+        oscLeft.type = wave;
+        oscRight.type = wave;
+      }
+    }
+
+    function changeAmbient(ambientType) {
+      currentAmbient = ambientType;
+      if (isPlaying) {
+        playAmbientNoise();
+      }
+    }
+
+    // Generator Noise Hujan / Ombak Sintetis
+    function createNoiseBuffer() {
+      if (!audioCtx) return null;
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let lastOut = 0.0;
+
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        if (currentAmbient === 'rain') {
+          // Pink Noise Filter
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5;
+        } else if (currentAmbient === 'waves') {
+          // Brown Noise Filter
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 2.0;
+        }
+      }
+      return buffer;
+    }
+
+    function playAmbientNoise() {
+      stopAmbientNoise();
+      if (currentAmbient === 'none' || !audioCtx) return;
+
+      const noiseBuffer = createNoiseBuffer();
+      if (!noiseBuffer) return;
+
+      ambientNode = audioCtx.createBufferSource();
+      ambientNode.buffer = noiseBuffer;
+      ambientNode.loop = true;
+
+      ambientGainNode = audioCtx.createGain();
+      ambientGainNode.gain.value = 0.15; 
+
+      ambientNode.connect(ambientGainNode);
+      ambientGainNode.connect(audioCtx.destination);
+      ambientNode.start();
+    }
+
+    function stopAmbientNoise() {
+      if (ambientNode) {
+        try {
+          ambientNode.stop();
+          ambientNode.disconnect();
+        } catch(e){}
+        ambientNode = null;
+      }
+    }
+
     function setTimer(minutes, evt) {
       clearTimer();
 
@@ -718,9 +807,6 @@
       }
     }
 
-    // ==========================================
-    // 4. CANVAS WAVE VISUALIZER
-    // ==========================================
     const canvas = document.getElementById('visualizer');
     const ctx = canvas.getContext('2d');
     let waveStep = 0;
@@ -756,9 +842,6 @@
     }
     drawCanvas();
 
-    // ==========================================
-    // 5. BREATHING GUIDE (4-7-8)
-    // ==========================================
     let isBreathing = false;
     let breathInterval;
 
@@ -793,9 +876,6 @@
       }
     }
 
-    // ==========================================
-    // 6. LOCALSTORAGE EUREKA NOTES
-    // ==========================================
     const notesBox = document.getElementById('eurekaNotes');
     notesBox.value = localStorage.getItem('gelombang_eureka_notes') || '';
 
