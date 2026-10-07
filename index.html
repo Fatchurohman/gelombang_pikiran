@@ -345,6 +345,13 @@
       background: rgba(245, 158, 11, 0.05);
     }
 
+    .theory-box.credit {
+      border-left-color: var(--accent-purple);
+      background: rgba(146, 95, 255, 0.08);
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+
     .theory-box h3 {
       font-size: 0.95rem;
       margin-bottom: 6px;
@@ -413,7 +420,7 @@
 
       <!-- Tombol Wajib Baca -->
       <button class="btn-wajib-baca" onclick="openTheoryModal()">
-        ⚠️ Wajib Baca Panduan ini Sebelum dicoba
+        ⚠️ Wajib Baca: Panduan & Dasar Teori
       </button>
     </header>
 
@@ -470,7 +477,7 @@
   <div id="theoryModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>📖Panduan Penggunaan</h2>
+        <h2>📖 Dasar Teori & Panduan Penggunaan</h2>
       </div>
       
       <div class="modal-body">
@@ -508,6 +515,17 @@
             <li>Gunakan <b>Earphone</b> dengan volume sedang/nyaman (tidak terlalu keras).</li>
             <li>Pilih jenis gelombang dan pasang <b>Timer Auto-Stop</b> sesuai kebutuhan.</li>
           </ol>
+        </div>
+
+        <!-- Bagian Pengkreditan & Referensi Sumber -->
+        <div class="theory-box credit">
+          <p>
+            Aplikasi ini dibuat oleh <b>fatur62</b> dengan merujuk pada dasar teori ilmiah dari sumber:
+          </p>
+          <ul style="padding-left: 18px; margin-top: 6px;">
+            <li><i>Binaural Beats - A Beginner's Guide</i> karya <b>James Mathews</b></li>
+            <li><i>Principles of Neural Science</i> karya <b>Eric R. Kandel, dkk.</b></li>
+          </ul>
         </div>
 
       </div>
